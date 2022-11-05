@@ -76,24 +76,22 @@ vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFou
 		{
 			int tempY = y + j;
 			if (tempY >= grid->size() || tempY < 0) continue;
+			steps++;
 
 			if (grid->at(tempX)[tempY] == 1)
 			{
 				cout << "Hit ship at: " << tempX << "," << tempY << endl;
 				grid->at(tempX)[tempY] = 0;
-				steps++;
 				found++;
 
 				outValues.push_back(steps);
 				outValues.push_back(found);
 
 				return outValues;
-
 			}
 			else
 			{
 				int temp = MissType(*grid, tempX, tempY);
-				steps++;
 			}
 		}
 	}
@@ -119,6 +117,7 @@ int FindShips(vector<vector<int>>* grid)
 				cout << "Hit ship at: " << x << "," << y << endl;
 				grid->at(x)[y] = 0;
 				found++;
+				if (found >= 10) return steps;
 			}
 			while (MissType(*grid, x, y) == 1)
 			{
