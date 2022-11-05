@@ -10,7 +10,7 @@ void AddShips(vector<vector<int>>* grid, int shipCount);
 
 int MissType(vector<vector<int>> grid, int x, int y);
 
-vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFound);
+vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFound, int startX, int startY);
 
 int FindShips(vector<vector<int>>* grid);
 

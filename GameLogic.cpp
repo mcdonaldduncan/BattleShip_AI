@@ -39,7 +39,7 @@ void AddShips(vector<vector<int>>* grid, int shipCount)
 
 int MissType(vector<vector<int>> grid, int x, int y)
 {
-	string temp = "Miss!";
+	string temp = "MISS";
 	int val = 0;
 	for (int i = -1; i <= 1; i++)
 	{
@@ -53,28 +53,32 @@ int MissType(vector<vector<int>> grid, int x, int y)
 
 			if (grid[tempX][tempY] == 1)
 			{
-				temp = "Near Miss!";
+				temp = "NEAR MISS";
 				val = 1;
 			}
 		}
 	}
-	cout << temp << endl;
+	cout << temp << " at " << x << "," << y << endl;
 	return val;
 }
 
-vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFound)
+vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFound, int startX, int startY)
 {
 	vector<int> outValues;
 	int steps = 0;
 	int found = currentFound;
-	for (int i = -1; i <= 1; i++)
+	int tempX = -1;
+	int tempY = -1;
+	int tempExtra = startY;
+	for (int i = startX; i <= 1; i++)
 	{
-		int tempX = x + i;
+		tempX = x + i;
 		if (tempX >= grid->size() || tempX < 0) continue;
-
-		for (int j = -1; j <= 1; j++)
+		if (i != startX) tempExtra = -1;
+		for (int j = tempExtra; j <= 1; j++)
 		{
-			int tempY = y + j;
+			tempY = y + j;
+			if (i == 0 && j == 0) continue;
 			if (tempY >= grid->size() || tempY < 0) continue;
 			steps++;
 
@@ -86,6 +90,8 @@ vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFou
 
 				outValues.push_back(steps);
 				outValues.push_back(found);
+				outValues.push_back(i);
+				outValues.push_back(j);
 
 				return outValues;
 			}
@@ -97,6 +103,8 @@ vector<int> SearchAround(vector<vector<int>>* grid, int x, int y, int currentFou
 	}
 	outValues.push_back(steps);
 	outValues.push_back(found);
+	outValues.push_back(-1);
+	outValues.push_back(-1);
 
 	return outValues;
 }
@@ -105,8 +113,8 @@ int FindShips(vector<vector<int>>* grid)
 {
 	int found = 0;
 	int steps = 0;
-	int x = 1;
-	int y = 1;
+	int x = 0;
+	int y = 0;
 
 	while (x < grid->size())
 	{
@@ -119,31 +127,26 @@ int FindShips(vector<vector<int>>* grid)
 				found++;
 				if (found >= 10) return steps;
 			}
+			int tempX = -1;
+			int tempY = -1;
 			while (MissType(*grid, x, y) == 1)
 			{
-				vector<int> tempV = SearchAround(grid, x, y, found);
+				vector<int> tempV = SearchAround(grid, x, y, found, tempX, tempY);
 				steps += tempV[0];
 				found = tempV[1];
+				tempX = tempV[2];
+				tempY = tempV[3];
 				if (found >= 10) return steps;
 			}
 			steps++;
 
 			y += 3;
 
-			if (y >= grid->at(x).size())
-			{
-				y--;
-			}
 		}
 
 		x += 3;
 
-		if (x >= grid->size())
-		{
-			x--;
-		}
-
-		y = 1;
+		y = 0;
 	}
 
 	return steps;
